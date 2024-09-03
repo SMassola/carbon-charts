@@ -1,4 +1,4 @@
-import { type TreemapChartOptions, type ChartTabularData } from '@carbon/charts'
+import { type TreemapChartOptions, type ChartTabularData, TruncationTypes } from '@carbon/charts'
 import type { ChartTypes, Example } from '../types'
 
 const vanilla = 'TreemapChart'
@@ -31,9 +31,29 @@ const customColorOptions: TreemapChartOptions = {
 	}
 }
 
+const configuredGroupMapsTo: TreemapChartOptions = {
+	title: 'Treemap (Custom groupings)',
+	height: '600px',
+	data: {
+		groupMapsTo: 'area'
+	},
+	legend: {
+		enabled: true,
+		order: [
+			'large (> 30000000 km\u00B2)',
+			'medium (> 10000000 km\u00B2)',
+			'small (=< 10000000 km\u00B2)'
+		],
+		truncation: {
+			type: TruncationTypes.NONE
+		}
+	}
+}
+
 const data: ChartTabularData = [
 	{
 		name: 'Oceania',
+		area: 'small (=< 10000000 km\u00B2)',
 		children: [
 			{ name: 'A', value: 800 },
 			{ name: 'B', value: 200 },
@@ -43,6 +63,7 @@ const data: ChartTabularData = [
 	},
 	{
 		name: 'Europe',
+		area: 'small (=< 10000000 km\u00B2)',
 		children: [
 			{ name: 'France', value: 2800, showLabel: true },
 			{ name: 'Germany', value: 10000, showLabel: true },
@@ -53,6 +74,7 @@ const data: ChartTabularData = [
 	},
 	{
 		name: 'America',
+		area: 'large (> 30000000 km\u00B2)',
 		children: [
 			{ name: 'U.S.', value: 3500, showLabel: true },
 			{ name: 'Brazil', value: 3000, showLabel: true },
@@ -72,6 +94,7 @@ const data: ChartTabularData = [
 	},
 	{
 		name: 'Australia',
+		area: 'small (=< 10000000 km\u00B2)',
 		children: [
 			{ name: 'KH', value: 2000 },
 			{ name: 'LL', value: 400 },
@@ -86,6 +109,7 @@ const data: ChartTabularData = [
 	},
 	{
 		name: 'Africa',
+		area: 'medium (> 10000000 km\u00B2)',
 		children: [
 			{ name: 'Nigeria', value: 2300, showLabel: true },
 			{ name: 'TT', value: 2000 },
@@ -101,6 +125,7 @@ const data: ChartTabularData = [
 	},
 	{
 		name: 'Asia',
+		area: 'large (> 30000000 km\u00B2)',
 		children: [
 			{
 				name: 'China',
@@ -130,6 +155,11 @@ export const examples: Example[] = [
 	{
 		data,
 		options: customColorOptions,
+		tags: ['test']
+	},
+	{
+		data,
+		options: configuredGroupMapsTo,
 		tags: ['test']
 	}
 ]

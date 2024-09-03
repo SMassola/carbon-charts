@@ -85,7 +85,7 @@ export class Treemap extends Component {
 
 		const leafGroups = svg
 			.selectAll("g[data-name='leaf']")
-			.data(root.leaves(), (leaf: any) => leaf.data.name)
+			.data(root.leaves(), (leaf: any) => leaf.data[options.data.groupMapsTo])
 
 		// Remove leaf groups that need to be removed
 		leafGroups.exit().attr('opacity', 0).remove()
@@ -130,7 +130,7 @@ export class Treemap extends Component {
 
 				return this.model.getColorClassName({
 					classNameTypes: [ColorClassNameTypes.FILL],
-					dataGroupName: d.data.name,
+					dataGroupName: d.data[options.data.groupMapsTo],
 					originalClassName: 'leaf'
 				})
 			})
@@ -146,7 +146,7 @@ export class Treemap extends Component {
 			.attr('height', (d: any) => d.y1 - d.y0)
 			.style('fill', (d: any) => {
 				while (d.depth > 1) d = d.parent
-				return this.model.getFillColor(d.data.name, null, d.data)
+				return this.model.getFillColor(d.data[options.data.groupMapsTo], null, d.data)
 			})
 
 		// Update all clip paths
@@ -200,7 +200,7 @@ export class Treemap extends Component {
 					return [
 						{
 							text: d.data.name,
-							backgroundColor: this.model.getFillColor(parent.data.name)
+							backgroundColor: this.model.getFillColor(parent.data[options.data.groupMapsTo])
 						}
 					]
 				},
@@ -235,6 +235,8 @@ export class Treemap extends Component {
 
 	addEventListeners() {
 		const self = this
+		const groupMapsTo = self.model.getOptions().data?.groupMapsTo
+
 		this.parent
 			.selectAll('rect.leaf')
 			.on('mouseover', function (event: MouseEvent, datum: any) {
@@ -253,7 +255,7 @@ export class Treemap extends Component {
 						})
 					)
 					.style('fill', (d: any) => {
-						const customColor = self.model.getFillColor(d.parent.data.name, null, d.data)
+						const customColor = self.model.getFillColor(d.parent.data[groupMapsTo], null, d.data)
 						if (customColor) {
 							fillColor = customColor
 						}
@@ -321,7 +323,9 @@ export class Treemap extends Component {
 							name: 'graph_element_mouseout_fill_update'
 						})
 					)
-					.style('fill', (d: any) => self.model.getFillColor(d.parent.data.name, null, d.data))
+					.style('fill', (d: any) => {
+						return self.model.getFillColor(d.parent.data[groupMapsTo], null, d.data)
+					})
 
 				// Dispatch mouse event
 				self.services.events.dispatchEvent(Events.Treemap.LEAF_MOUSEOUT, {
@@ -339,6 +343,7 @@ export class Treemap extends Component {
 
 	handleLegendOnHover = (event: CustomEvent) => {
 		const { hoveredElement } = event.detail
+		const groupMapsTo = this.model.getOptions().data?.groupMapsTo
 
 		this.parent
 			.selectAll("g[data-name='leaf']")
@@ -350,7 +355,7 @@ export class Treemap extends Component {
 				})
 			)
 			.attr('opacity', (d: any) =>
-				d.parent.data.name === hoveredElement.datum()['name'] ? 1 : 0.3
+				d.parent.data[groupMapsTo] === hoveredElement.datum()['name'] ? 1 : 0.3
 			)
 	}
 
